@@ -17,7 +17,7 @@ namespace SaveFetch
             this.config = helper.ReadConfig<ModConfig>();
             this.tokens = new TokenStore(helper.Data);
             this.auth = new AuthService(this.Monitor, this.config, this.tokens);
-            this.api = new ApiClient(this.config.BaseUrl);
+            this.api = new ApiClient(this.config.SaveUrl);
 
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
             helper.Events.GameLoop.Saved += this.OnSaved;
@@ -82,7 +82,8 @@ namespace SaveFetch
                 this.Monitor.Log("Not logged in. Run `savefetch_login` to log in.", LogLevel.Info);
             }
 
-            this.Monitor.Log($"Server: {this.config.BaseUrl}", LogLevel.Info);
+            this.Monitor.Log($"Login URL: {this.config.LoginUrl}", LogLevel.Info);
+            this.Monitor.Log($"Save URL: {this.config.SaveUrl}", LogLevel.Info);
             this.Monitor.Log($"Last upload: {this.lastUploadResult}", LogLevel.Info);
         }
 

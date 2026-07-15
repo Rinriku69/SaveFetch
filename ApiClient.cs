@@ -27,11 +27,11 @@ namespace SaveFetch
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
 
-        private readonly string baseUrl;
+        private readonly string saveUrl;
 
-        public ApiClient(string baseUrl)
+        public ApiClient(string saveUrl)
         {
-            this.baseUrl = baseUrl.TrimEnd('/');
+            this.saveUrl = saveUrl;
         }
 
         public async Task<(UploadResult Result, string Detail)> UploadSaveAsync(SavePayload payload, string accessToken)
@@ -40,7 +40,7 @@ namespace SaveFetch
             {
                 string json = JsonSerializer.Serialize(payload, jsonOptions);
 
-                using var request = new HttpRequestMessage(HttpMethod.Post, $"{this.baseUrl}/api/saves");
+                using var request = new HttpRequestMessage(HttpMethod.Post, this.saveUrl);
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
                 request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 request.Content = new StringContent(json, Encoding.UTF8, "application/json");

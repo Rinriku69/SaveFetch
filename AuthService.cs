@@ -50,7 +50,9 @@ namespace SaveFetch
                 listener.Prefixes.Add($"http://127.0.0.1:{port}/callback/");
                 listener.Start();
 
-                string loginUrl = $"{this.config.BaseUrl.TrimEnd('/')}?port={port}&state={Uri.EscapeDataString(state)}";
+                // use & if the configured URL already carries a query string, ? otherwise
+                string separator = this.config.LoginUrl.Contains('?') ? "&" : "?";
+                string loginUrl = $"{this.config.LoginUrl.TrimEnd('/')}{separator}port={port}&state={Uri.EscapeDataString(state)}";
                 this.monitor.Log("Opening your browser to log in...", LogLevel.Info);
                 this.monitor.Log($"If it doesn't open, visit: {loginUrl}", LogLevel.Info);
                 Process.Start(new ProcessStartInfo(loginUrl) { UseShellExecute = true });
