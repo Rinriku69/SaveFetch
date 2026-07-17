@@ -2,6 +2,7 @@ using System;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Numerics;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -87,7 +88,7 @@ namespace SaveFetch
             }
         }
 
-        public async Task<(UploadResult Result, string Detail)> UploadAvatarAsync(byte[] pngBytes, string avatarUrl, string accessToken)
+        public async Task<(UploadResult Result, string Detail)> UploadAvatarAsync(byte[] pngBytes, string avatarUrl,string saveId,string accessToken)
         {
             try
             {
@@ -97,7 +98,9 @@ namespace SaveFetch
 
                 using var content = new MultipartFormDataContent();
                 var imageContent = new ByteArrayContent(pngBytes);
+                var saveIdContent = new StringContent(saveId);
                 imageContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
+                content.Add(saveIdContent,"saveId");
                 content.Add(imageContent, "avatar", "avatar.png");
                 request.Content = content;
 

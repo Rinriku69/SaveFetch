@@ -13,10 +13,12 @@ namespace SaveFetch
     /// </summary>
     public static class PlayerSpriteRenderer
     {
-        // one animation cel is 16x32px; render upscaled for a crisper web-side image, with a
-        // margin around the frame since FarmerRenderer.draw's anchor (hat/hair overhang, etc.)
-        // isn't precisely documented outside the game's own use of it — confirm the framing
-        // looks right in the manual verification pass and tighten these if there's dead space.
+        // One animation cel is 16x32px. FarmerRenderer.draw's simple overload forwards scale=1
+        // through to the internal draw, which does `scale2 = 4f * scale` and uses it directly as
+        // the SpriteBatch.Draw scale — i.e. the 4x (Game1.pixelZoom) upscale is already baked into
+        // the draw call, and `position` is plain final-pixel canvas space. Don't apply another
+        // SpriteBatch transform on top of that (confirmed via decompile — see PR discussion), or
+        // the sprite renders at 16x instead of 4x and only a corner fits on canvas.
         private const int FrameWidth = 16;
         private const int FrameHeight = 32;
         private const int Scale = 4;
@@ -35,8 +37,8 @@ namespace SaveFetch
 
             var position = new Vector2(CanvasWidth / 2f - (FrameWidth * Scale / 2f), CanvasHeight * 0.15f);
 
-            spriteBatch.Begin(transformMatrix: Matrix.CreateScale(Scale));
-            player.FarmerRenderer.draw(spriteBatch, player, FarmerSprite.walkDown, position / Scale);
+            spriteBatch.Begin();
+            player.FarmerRenderer.draw(spriteBatch, player, FarmerSprite.walkDown, position);
             spriteBatch.End();
 
             device.SetRenderTarget(null);

@@ -80,15 +80,16 @@ namespace SaveFetch
                     this.Monitor.Log($"Save upload failed: {saveDetail}", LogLevel.Warn);
                     break;
             }
-
+            
             if (avatarPng == null)
                 return;
-
+            
+            string saveId = payload.SaveId.ToString();
             // reuse whatever token the save upload ended up with, so a token refreshed above
             // isn't refreshed a second time for this second request
             var (avatarResult, avatarDetail, _) = await this.UploadWithRefreshAsync(
-                token => this.api.UploadAvatarAsync(avatarPng, this.config.AvatarUrl, token), accessToken);
-
+                token => this.api.UploadAvatarAsync(avatarPng, this.config.AvatarUrl,saveId, token), accessToken);
+            this.Monitor.Log("Uploading avatar...");
             switch (avatarResult)
             {
                 case UploadResult.Success:
